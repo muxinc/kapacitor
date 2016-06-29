@@ -15,9 +15,6 @@ import (
 )
 
 type Service struct {
-	HTTPDService interface {
-		URL() string
-	}
 	httpClient *http.Client
 	username   string
 	password   string
