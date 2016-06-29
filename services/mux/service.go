@@ -1,4 +1,4 @@
-package muxincident
+package mux
 
 import (
 	"bytes"
@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/influxdata/kapacitor"
@@ -60,13 +61,13 @@ func (s *Service) Alert(incidentKey string, level kapacitor.AlertLevel, t time.T
 		pData["severity"] = "alert"
 		pData["started_at"] = t.Format(time.RFC3339)
 	case kapacitor.InfoAlert:
-		return fmt.Errorf("AlertLevel 'info' is currently ignored by the MuxIncident service")
+		return fmt.Errorf("AlertLevel 'info' is currently ignored by the Mux service")
 	default:
 		pData["status"] = "closed"
 		pData["resolved_at"] = t.Format(time.RFC3339)
 	}
 
-	// Post data to MuxIncident
+	// Post data to Mux
 	var post bytes.Buffer
 	enc := json.NewEncoder(&post)
 	err := enc.Encode(pData)
@@ -75,7 +76,11 @@ func (s *Service) Alert(incidentKey string, level kapacitor.AlertLevel, t time.T
 	}
 
 	// incidentKey should look like properties/:property_id/alerts/:alert_id
-	fullURL := s.url + "/internal-api/v1/" + incidentKey + "/incident"
+	fullURL := s.url
+	if false == strings.HasSuffix(fullURL, "/") {
+		fullURL = fullURL + "/"
+	}
+	fullURL = "internal-api/v1/" + incidentKey + "/incident"
 
 	req, err := http.NewRequest(http.MethodPost, fullURL, &post)
 	req.SetBasicAuth(s.username, s.password)
@@ -97,7 +102,7 @@ func (s *Service) Alert(incidentKey string, level kapacitor.AlertLevel, t time.T
 		type response struct {
 			Message string `json:"message"`
 		}
-		r := &response{Message: fmt.Sprintf("failed to understand MuxIncident response. code: %d content: %s", resp.StatusCode, string(body))}
+		r := &response{Message: fmt.Sprintf("failed to understand Mux response. code: %d content: %s", resp.StatusCode, string(body))}
 		b := bytes.NewReader(body)
 		dec := json.NewDecoder(b)
 		dec.Decode(r)

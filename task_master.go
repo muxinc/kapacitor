@@ -73,7 +73,7 @@ type TaskMaster struct {
 		Global() bool
 		Alert(routingKey, messageType, message, entityID string, t time.Time, extra interface{}) error
 	}
-	MuxIncidentService interface {
+	MuxService interface {
 		Global() bool
 		Alert(incidentKey string, level AlertLevel, t time.Time) error
 	}
