@@ -17,6 +17,7 @@ import (
 	"github.com/influxdata/kapacitor/services/httpd"
 	"github.com/influxdata/kapacitor/services/influxdb"
 	"github.com/influxdata/kapacitor/services/logging"
+	"github.com/influxdata/kapacitor/services/muxincident"
 	"github.com/influxdata/kapacitor/services/opsgenie"
 	"github.com/influxdata/kapacitor/services/pagerduty"
 	"github.com/influxdata/kapacitor/services/replay"
@@ -47,24 +48,25 @@ type Config struct {
 	InfluxDB []influxdb.Config `toml:"influxdb"`
 	Logging  logging.Config    `toml:"logging"`
 
-	Graphites []graphite.Config `toml:"graphite"`
-	Collectd  collectd.Config   `toml:"collectd"`
-	OpenTSDB  opentsdb.Config   `toml:"opentsdb"`
-	UDPs      []udp.Config      `toml:"udp"`
-	SMTP      smtp.Config       `toml:"smtp"`
-	OpsGenie  opsgenie.Config   `toml:"opsgenie"`
-	VictorOps victorops.Config  `toml:"victorops"`
-	PagerDuty pagerduty.Config  `toml:"pagerduty"`
-	Sensu     sensu.Config      `toml:"sensu"`
-	Slack     slack.Config      `toml:"slack"`
-	Telegram  telegram.Config   `toml:"telegram"`
-	HipChat   hipchat.Config    `toml:"hipchat"`
-	Alerta    alerta.Config     `toml:"alerta"`
-	Reporting reporting.Config  `toml:"reporting"`
-	Stats     stats.Config      `toml:"stats"`
-	UDF       udf.Config        `toml:"udf"`
-	Deadman   deadman.Config    `toml:"deadman"`
-	Talk      talk.Config       `toml:"talk"`
+	Graphites   []graphite.Config  `toml:"graphite"`
+	Collectd    collectd.Config    `toml:"collectd"`
+	OpenTSDB    opentsdb.Config    `toml:"opentsdb"`
+	UDPs        []udp.Config       `toml:"udp"`
+	SMTP        smtp.Config        `toml:"smtp"`
+	OpsGenie    opsgenie.Config    `toml:"opsgenie"`
+	VictorOps   victorops.Config   `toml:"victorops"`
+	MuxIncident muxincident.Config `toml:"muxincident"`
+	PagerDuty   pagerduty.Config   `toml:"pagerduty"`
+	Sensu       sensu.Config       `toml:"sensu"`
+	Slack       slack.Config       `toml:"slack"`
+	Telegram    telegram.Config    `toml:"telegram"`
+	HipChat     hipchat.Config     `toml:"hipchat"`
+	Alerta      alerta.Config      `toml:"alerta"`
+	Reporting   reporting.Config   `toml:"reporting"`
+	Stats       stats.Config       `toml:"stats"`
+	UDF         udf.Config         `toml:"udf"`
+	Deadman     deadman.Config     `toml:"deadman"`
+	Talk        talk.Config        `toml:"talk"`
 
 	Hostname string `toml:"hostname"`
 	DataDir  string `toml:"data_dir"`
@@ -90,6 +92,7 @@ func NewConfig() *Config {
 	c.SMTP = smtp.NewConfig()
 	c.OpsGenie = opsgenie.NewConfig()
 	c.VictorOps = victorops.NewConfig()
+	c.MuxIncident = muxincident.NewConfig()
 	c.PagerDuty = pagerduty.NewConfig()
 	c.Sensu = sensu.NewConfig()
 	c.Slack = slack.NewConfig()
