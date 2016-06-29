@@ -77,7 +77,7 @@ func (s *Service) Alert(incidentKey string, level kapacitor.AlertLevel, t time.T
 	if false == strings.HasSuffix(fullURL, "/") {
 		fullURL = fullURL + "/"
 	}
-	fullURL = "internal-api/v1/" + incidentKey + "/incident"
+	fullURL = fullURL + "internal-api/v1/" + incidentKey + "/incident"
 
 	req, err := http.NewRequest(http.MethodPost, fullURL, &post)
 	req.SetBasicAuth(s.username, s.password)
