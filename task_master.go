@@ -183,6 +183,7 @@ func (tm *TaskMaster) New(id string) *TaskMaster {
 	n.SMTPService = tm.SMTPService
 	n.OpsGenieService = tm.OpsGenieService
 	n.VictorOpsService = tm.VictorOpsService
+	n.MuxService = tm.MuxService
 	n.PagerDutyService = tm.PagerDutyService
 	n.SlackService = tm.SlackService
 	n.HipChatService = tm.HipChatService
