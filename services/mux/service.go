@@ -69,7 +69,7 @@ func (s *Service) Alert(incidentKey string, level kapacitor.AlertLevel, t time.T
 	// Post data to Mux
 	var post bytes.Buffer
 	enc := json.NewEncoder(&post)
-	err := enc.Encode(pData)
+	err := enc.Encode(parent)
 	if err != nil {
 		return err
 	}
