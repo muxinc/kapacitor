@@ -47,7 +47,9 @@ func (s *Service) Global() bool {
 }
 
 func (s *Service) Alert(incidentKey string, level kapacitor.AlertLevel, t time.Time) error {
+	parent := make(map[string]map[string]string)
 	pData := make(map[string]string)
+	parent["incident"] = pData
 	switch level {
 	case kapacitor.WarnAlert:
 		pData["status"] = "open"
