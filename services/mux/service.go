@@ -8,10 +8,15 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"regexp"
 	"strings"
 	"time"
 
 	"github.com/influxdata/kapacitor"
+)
+
+const (
+	incidentKeyRegExp = regexp.MustCompile("^properties/(.+)/alerts/(.+)/breakdown/(.+)/breakdown_value/(.+)$")
 )
 
 type Service struct {
@@ -47,9 +52,18 @@ func (s *Service) Global() bool {
 }
 
 func (s *Service) Alert(incidentKey string, level kapacitor.AlertLevel, t time.Time) error {
+	if !incidentKeyRegExp.Matches(incidentKey) {
+		return fmt.Errorf("Incident key did not match regular-expression pattern: key = %s", incidentKey)
+	}
+
+	// parse incident key for details
+	keyParts := incidentKeyRegExp.FindStringSubmatch(incidentKey)
+
 	parent := make(map[string]map[string]string)
 	pData := make(map[string]string)
 	parent["incident"] = pData
+	pData["breakdown"] = keyParts[3]
+	pData["breakdown_value"] = keyParts[4]
 	switch level {
 	case kapacitor.WarnAlert:
 		pData["status"] = "open"
@@ -79,7 +93,7 @@ func (s *Service) Alert(incidentKey string, level kapacitor.AlertLevel, t time.T
 	if false == strings.HasSuffix(fullURL, "/") {
 		fullURL = fullURL + "/"
 	}
-	fullURL = fullURL + "internal-api/v1/" + incidentKey + "/incident"
+	fullURL = fullURL + "internal-api/v1/properties/" + keyParts[1] + "/alerts/" + keyParts[2] + "/incident"
 
 	req, err := http.NewRequest(http.MethodPost, fullURL, &post)
 	req.SetBasicAuth(s.username, s.password)
