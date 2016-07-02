@@ -15,7 +15,7 @@ import (
 	"github.com/influxdata/kapacitor"
 )
 
-const (
+var (
 	incidentKeyRegExp = regexp.MustCompile("^properties/(.+)/alerts/(.+)/breakdown/(.+)/breakdown_value/(.+)$")
 )
 
@@ -52,7 +52,7 @@ func (s *Service) Global() bool {
 }
 
 func (s *Service) Alert(incidentKey string, level kapacitor.AlertLevel, t time.Time) error {
-	if !incidentKeyRegExp.Matches(incidentKey) {
+	if !incidentKeyRegExp.MatchString(incidentKey) {
 		return fmt.Errorf("Incident key did not match regular-expression pattern: key = %s", incidentKey)
 	}
 
