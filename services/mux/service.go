@@ -63,7 +63,8 @@ func (s *Service) Alert(incidentKey string, level kapacitor.AlertLevel, t time.T
 	pData := make(map[string]interface{})
 
 	// set breakdowns on incident
-	breakdowns := strings.Split(keyParts[3], ",")
+	breakdownKey = strings.TrimSuffix(keyParts[3], ",")
+	breakdowns := strings.Split(breakdownKey, ",")
 	breakdownGroups := make([]map[string]string, len(breakdowns))
 	for _, b := range breakdowns {
 		breakdownParts := strings.Split(b, "=")
@@ -71,7 +72,7 @@ func (s *Service) Alert(incidentKey string, level kapacitor.AlertLevel, t time.T
 	}
 
 	parent["incident"] = pData
-	pData["breakdown_key"] = keyParts[3]
+	pData["breakdown_key"] = breakdownKey
 	pData["breakdowns"] = breakdownGroups
 	switch level {
 	case kapacitor.WarnAlert:
