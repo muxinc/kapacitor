@@ -16,7 +16,7 @@ import (
 )
 
 var (
-	incidentKeyRegExp = regexp.MustCompile("^properties/(.+)/alerts/(.+)/breakdown/(.+)/breakdown_value/(.+)$")
+	incidentKeyRegExp = regexp.MustCompile("^properties/(.+)/alerts/(.+)/breakdown/(.+)$")
 )
 
 type Service struct {
@@ -59,11 +59,15 @@ func (s *Service) Alert(incidentKey string, level kapacitor.AlertLevel, t time.T
 	// parse incident key for details
 	keyParts := incidentKeyRegExp.FindStringSubmatch(incidentKey)
 
+	// TODO support multiple breakdowns for alerting
+	breakdowns := strings.Split(keyParts[3], ",")
+	breakdownParts := strings.Split(breakdowns[0], "=")
+
 	parent := make(map[string]map[string]string)
 	pData := make(map[string]string)
 	parent["incident"] = pData
-	pData["breakdown"] = keyParts[3]
-	pData["breakdown_value"] = keyParts[4]
+	pData["breakdown"] = breakdownParts[0]
+	pData["breakdown_value"] = breakdownParts[1]
 	switch level {
 	case kapacitor.WarnAlert:
 		pData["status"] = "open"
