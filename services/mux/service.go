@@ -59,15 +59,20 @@ func (s *Service) Alert(incidentKey string, level kapacitor.AlertLevel, t time.T
 	// parse incident key for details
 	keyParts := incidentKeyRegExp.FindStringSubmatch(incidentKey)
 
-	// TODO support multiple breakdowns for alerting
-	breakdowns := strings.Split(keyParts[3], ",")
-	breakdownParts := strings.Split(breakdowns[0], "=")
+	parent := make(map[string]map[string]interface{})
+	pData := make(map[string]interface{})
 
-	parent := make(map[string]map[string]string)
-	pData := make(map[string]string)
+	// set breakdowns on incident
+	breakdowns := strings.Split(keyParts[3], ",")
+	breakdownGroups := make([]map[string]string, len(breakdowns))
+	for _, b := range breakdowns {
+		breakdownParts := strings.Split(b, "=")
+		breakdownGroups = append(breakdownGroups, map[string]string{"name": breakdownParts[0], "value": breakdownParts[1]})
+	}
+
 	parent["incident"] = pData
-	pData["breakdown"] = breakdownParts[0]
-	pData["breakdown_value"] = breakdownParts[1]
+	pData["breakdown_key"] = keyParts[3]
+	pData["breakdowns"] = breakdownGroups
 	switch level {
 	case kapacitor.WarnAlert:
 		pData["status"] = "open"
