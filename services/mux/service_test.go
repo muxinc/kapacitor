@@ -81,6 +81,14 @@ func TestBuildIncident(t *testing.T) {
 		wantErr bool
 	}{
 		{
+			name:        "Info alert",
+			incidentKey: "properties/4/alerts/38/breakdown/country=US,",
+			level:       kapacitor.InfoAlert,
+			t:           time.Unix(1468072740, 0).In(utcLocation),
+			want:        "",
+			wantErr:     true,
+		},
+		{
 			name:        "Open Warning, Single breakdown",
 			incidentKey: "properties/4/alerts/38/breakdown/country=US,",
 			level:       kapacitor.WarnAlert,
