@@ -68,6 +68,7 @@ func TestServiceBuildIncidentURL(t *testing.T) {
 }
 
 func TestBuildIncident(t *testing.T) {
+	utcLocation, _ := time.LoadLocation("UTC")
 	tests := []struct {
 		// Test description.
 		name string
@@ -83,49 +84,49 @@ func TestBuildIncident(t *testing.T) {
 			name:        "Open Warning, Single breakdown",
 			incidentKey: "properties/4/alerts/38/breakdown/country=US,",
 			level:       kapacitor.WarnAlert,
-			t:           time.Unix(1468072740, 0),
-			want:        "{\"incident\":{\"breakdown_key\":\"country=US\",\"breakdowns\":[{\"name\":\"country\",\"value\":\"US\"}],\"severity\":\"warning\",\"started_at\":\"2016-07-09T06:59:00-07:00\",\"status\":\"open\"}}",
+			t:           time.Unix(1468072740, 0).In(utcLocation),
+			want:        "{\"incident\":{\"breakdown_key\":\"country=US\",\"breakdowns\":[{\"name\":\"country\",\"value\":\"US\"}],\"severity\":\"warning\",\"started_at\":\"2016-07-09T13:59:00Z\",\"status\":\"open\"}}",
 		},
 		{
 			name:        "Open Warning, Two breakdowns",
 			incidentKey: "properties/4/alerts/38/breakdown/country=US,browser=Firefox",
 			level:       kapacitor.WarnAlert,
-			t:           time.Unix(1468072740, 0),
-			want:        "{\"incident\":{\"breakdown_key\":\"country=US,browser=Firefox\",\"breakdowns\":[{\"name\":\"country\",\"value\":\"US\"},{\"name\":\"browser\",\"value\":\"Firefox\"}],\"severity\":\"warning\",\"started_at\":\"2016-07-09T06:59:00-07:00\",\"status\":\"open\"}}",
+			t:           time.Unix(1468072740, 0).In(utcLocation),
+			want:        "{\"incident\":{\"breakdown_key\":\"country=US,browser=Firefox\",\"breakdowns\":[{\"name\":\"country\",\"value\":\"US\"},{\"name\":\"browser\",\"value\":\"Firefox\"}],\"severity\":\"warning\",\"started_at\":\"2016-07-09T13:59:00Z\",\"status\":\"open\"}}",
 		},
 		{
 			name:        "Open Critical Alert, Single breakdown",
 			incidentKey: "properties/4/alerts/38/breakdown/country=US,",
 			level:       kapacitor.CritAlert,
-			t:           time.Unix(1468072740, 0),
-			want:        "{\"incident\":{\"breakdown_key\":\"country=US\",\"breakdowns\":[{\"name\":\"country\",\"value\":\"US\"}],\"severity\":\"alert\",\"started_at\":\"2016-07-09T06:59:00-07:00\",\"status\":\"open\"}}",
+			t:           time.Unix(1468072740, 0).In(utcLocation),
+			want:        "{\"incident\":{\"breakdown_key\":\"country=US\",\"breakdowns\":[{\"name\":\"country\",\"value\":\"US\"}],\"severity\":\"alert\",\"started_at\":\"2016-07-09T13:59:00Z\",\"status\":\"open\"}}",
 		},
 		{
 			name:        "Open Critical Alert, Two breakdowns",
 			incidentKey: "properties/4/alerts/38/breakdown/country=US,browser=Firefox",
 			level:       kapacitor.CritAlert,
-			t:           time.Unix(1468072740, 0),
-			want:        "{\"incident\":{\"breakdown_key\":\"country=US,browser=Firefox\",\"breakdowns\":[{\"name\":\"country\",\"value\":\"US\"},{\"name\":\"browser\",\"value\":\"Firefox\"}],\"severity\":\"alert\",\"started_at\":\"2016-07-09T06:59:00-07:00\",\"status\":\"open\"}}",
+			t:           time.Unix(1468072740, 0).In(utcLocation),
+			want:        "{\"incident\":{\"breakdown_key\":\"country=US,browser=Firefox\",\"breakdowns\":[{\"name\":\"country\",\"value\":\"US\"},{\"name\":\"browser\",\"value\":\"Firefox\"}],\"severity\":\"alert\",\"started_at\":\"2016-07-09T13:59:00Z\",\"status\":\"open\"}}",
 		},
 		{
 			name:        "Closed, Single breakdown",
 			incidentKey: "properties/4/alerts/38/breakdown/country=US,",
 			level:       kapacitor.OKAlert,
-			t:           time.Unix(1468072740, 0),
-			want:        "{\"incident\":{\"breakdown_key\":\"country=US\",\"breakdowns\":[{\"name\":\"country\",\"value\":\"US\"}],\"resolved_at\":\"2016-07-09T06:59:00-07:00\",\"status\":\"closed\"}}",
+			t:           time.Unix(1468072740, 0).In(utcLocation),
+			want:        "{\"incident\":{\"breakdown_key\":\"country=US\",\"breakdowns\":[{\"name\":\"country\",\"value\":\"US\"}],\"resolved_at\":\"2016-07-09T13:59:00Z\",\"status\":\"closed\"}}",
 		},
 		{
 			name:        "Closed, Two breakdowns",
 			incidentKey: "properties/4/alerts/38/breakdown/country=US,browser=Firefox",
 			level:       kapacitor.OKAlert,
-			t:           time.Unix(1468072740, 0),
-			want:        "{\"incident\":{\"breakdown_key\":\"country=US,browser=Firefox\",\"breakdowns\":[{\"name\":\"country\",\"value\":\"US\"},{\"name\":\"browser\",\"value\":\"Firefox\"}],\"resolved_at\":\"2016-07-09T06:59:00-07:00\",\"status\":\"closed\"}}",
+			t:           time.Unix(1468072740, 0).In(utcLocation),
+			want:        "{\"incident\":{\"breakdown_key\":\"country=US,browser=Firefox\",\"breakdowns\":[{\"name\":\"country\",\"value\":\"US\"},{\"name\":\"browser\",\"value\":\"Firefox\"}],\"resolved_at\":\"2016-07-09T13:59:00Z\",\"status\":\"closed\"}}",
 		},
 		{
 			name:        "Malformed Incident Key",
 			incidentKey: "foobar",
 			level:       kapacitor.WarnAlert,
-			t:           time.Unix(1468072740, 0),
+			t:           time.Unix(1468072740, 0).In(utcLocation),
 			want:        "",
 			wantErr:     true,
 		},
