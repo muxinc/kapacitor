@@ -25,6 +25,7 @@ import (
 	"github.com/influxdata/kapacitor/services/httpd"
 	"github.com/influxdata/kapacitor/services/influxdb"
 	"github.com/influxdata/kapacitor/services/logging"
+	"github.com/influxdata/kapacitor/services/mux"
 	"github.com/influxdata/kapacitor/services/noauth"
 	"github.com/influxdata/kapacitor/services/opsgenie"
 	"github.com/influxdata/kapacitor/services/pagerduty"
@@ -161,6 +162,7 @@ func New(c *Config, buildInfo BuildInfo, logService logging.Interface) (*Server,
 	s.appendSlackService()
 	s.appendSensuService()
 	s.appendTalkService()
+	s.appendMuxService()
 
 	// Append InfluxDB input services
 	s.appendCollectdService()
@@ -315,6 +317,17 @@ func (s *Server) appendVictorOpsService() {
 		s.TaskMaster.VictorOpsService = srv
 
 		s.AppendService("victorops", srv)
+	}
+}
+
+func (s *Server) appendMuxService() {
+	c := s.config.Mux
+	if c.Enabled {
+		l := s.LogService.NewLogger("[mux] ", log.LstdFlags)
+		srv := mux.NewService(c, l)
+		s.TaskMaster.MuxService = srv
+
+		s.Services = append(s.Services, srv)
 	}
 }
 

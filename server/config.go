@@ -17,6 +17,7 @@ import (
 	"github.com/influxdata/kapacitor/services/httpd"
 	"github.com/influxdata/kapacitor/services/influxdb"
 	"github.com/influxdata/kapacitor/services/logging"
+	"github.com/influxdata/kapacitor/services/mux"
 	"github.com/influxdata/kapacitor/services/opsgenie"
 	"github.com/influxdata/kapacitor/services/pagerduty"
 	"github.com/influxdata/kapacitor/services/replay"
@@ -54,6 +55,7 @@ type Config struct {
 	SMTP      smtp.Config       `toml:"smtp"`
 	OpsGenie  opsgenie.Config   `toml:"opsgenie"`
 	VictorOps victorops.Config  `toml:"victorops"`
+	Mux       mux.Config        `toml:"mux"`
 	PagerDuty pagerduty.Config  `toml:"pagerduty"`
 	Sensu     sensu.Config      `toml:"sensu"`
 	Slack     slack.Config      `toml:"slack"`
@@ -90,6 +92,7 @@ func NewConfig() *Config {
 	c.SMTP = smtp.NewConfig()
 	c.OpsGenie = opsgenie.NewConfig()
 	c.VictorOps = victorops.NewConfig()
+	c.Mux = mux.NewConfig()
 	c.PagerDuty = pagerduty.NewConfig()
 	c.Sensu = sensu.NewConfig()
 	c.Slack = slack.NewConfig()

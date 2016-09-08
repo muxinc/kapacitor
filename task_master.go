@@ -73,6 +73,10 @@ type TaskMaster struct {
 		Global() bool
 		Alert(routingKey, messageType, message, entityID string, t time.Time, extra interface{}) error
 	}
+	MuxService interface {
+		Global() bool
+		Alert(incidentKey string, level AlertLevel, t time.Time) error
+	}
 	PagerDutyService interface {
 		Global() bool
 		Alert(serviceKey, incidentKey, desc string, level AlertLevel, details interface{}) error
@@ -179,6 +183,7 @@ func (tm *TaskMaster) New(id string) *TaskMaster {
 	n.SMTPService = tm.SMTPService
 	n.OpsGenieService = tm.OpsGenieService
 	n.VictorOpsService = tm.VictorOpsService
+	n.MuxService = tm.MuxService
 	n.PagerDutyService = tm.PagerDutyService
 	n.SlackService = tm.SlackService
 	n.HipChatService = tm.HipChatService

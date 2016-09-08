@@ -214,6 +214,14 @@ func newAlertNode(et *ExecutingTask, n *pipeline.AlertNode, l *log.Logger) (an *
 		an.handlers = append(an.handlers, func(ad *AlertData) { an.handleVictorOps(&pipeline.VictorOpsHandler{}, ad) })
 	}
 
+	for _, mux := range n.MuxHandlers {
+		mux := mux
+		an.handlers = append(an.handlers, func(ad *AlertData) { an.handleMux(mux, ad) })
+	}
+	if len(n.MuxHandlers) == 0 && (et.tm.MuxService != nil && et.tm.MuxService.Global()) {
+		an.handlers = append(an.handlers, func(ad *AlertData) { an.handleMux(&pipeline.MuxHandler{}, ad) })
+	}
+
 	for _, pd := range n.PagerDutyHandlers {
 		pd := pd
 		an.handlers = append(an.handlers, func(ad *AlertData) { an.handlePagerDuty(pd, ad) })
@@ -1022,6 +1030,22 @@ func (a *AlertNode) handleVictorOps(vo *pipeline.VictorOpsHandler, ad *AlertData
 	)
 	if err != nil {
 		a.logger.Println("E! failed to send alert data to VictorOps:", err)
+		return
+	}
+}
+
+func (a *AlertNode) handleMux(pd *pipeline.MuxHandler, ad *AlertData) {
+	if a.et.tm.MuxService == nil {
+		a.logger.Println("E! failed to send Mux Incident alert. Mux is not enabled")
+		return
+	}
+	err := a.et.tm.MuxService.Alert(
+		ad.ID,
+		ad.Level,
+		ad.Time,
+	)
+	if err != nil {
+		a.logger.Println("E! failed to send alert data to Mux Incident API:", err)
 		return
 	}
 }

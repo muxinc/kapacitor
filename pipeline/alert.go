@@ -46,6 +46,7 @@ const defaultLogFileMode = 0600
 //    * Slack -- Post alert message to Slack channel.
 //    * OpsGenie -- Send alert to OpsGenie.
 //    * VictorOps -- Send alert to VictorOps.
+//    * Mux -- Send alert to Mux Incident API.
 //    * PagerDuty -- Send alert to PagerDuty.
 //    * Talk -- Post alert message to Talk client.
 //    * Telegram -- Post alert message to Telegram client.
@@ -307,6 +308,10 @@ type AlertNode struct {
 	// Send alert to VictorOps.
 	// tick:ignore
 	VictorOpsHandlers []*VictorOpsHandler `tick:"VictorOps"`
+
+	// Send alert to Mux.
+	// tick:ignore
+	MuxHandlers []*MuxHandler `tick:"Mux"`
 
 	// Send alert to PagerDuty.
 	// tick:ignore
@@ -710,6 +715,21 @@ type VictorOpsHandler struct {
 	// The routing key to use for the alert.
 	// Defaults to the value in the configuration if empty.
 	RoutingKey string
+}
+
+// Send alert to Mux Incident API.
+// tick:property
+func (a *AlertNode) Mux() *MuxHandler {
+	pd := &MuxHandler{
+		AlertNode: a,
+	}
+	a.MuxHandlers = append(a.MuxHandlers, pd)
+	return pd
+}
+
+// tick:embedded:AlertNode.Mux
+type MuxHandler struct {
+	*AlertNode
 }
 
 // Send the alert to PagerDuty.
