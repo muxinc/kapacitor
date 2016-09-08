@@ -1,5 +1,6 @@
 FROM buildpack-deps:jessie-curl
 
+ARG KAPACITOR_VERSION
 RUN gpg \
     --keyserver hkp://ha.pool.sks-keyservers.net \
     --recv-keys 05CE15085FC09D18E99EFB22684A14CF2582E0C5
